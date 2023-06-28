@@ -1,0 +1,173 @@
+openapi: 3.0.0
+info:
+  title: Bees API
+  description: API for reviewing, labeling, and relabeling ML model outputs.
+  version: 1.0.0
+paths:
+  /v1/datasets:
+    post:
+      summary: Create a new dataset
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Dataset'
+      responses:
+        '201':
+          description: Dataset created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dataset'
+  /v1/datasets/{dataset_id}/entries:
+    post:
+      summary: Add a new entry to a dataset
+      parameters:
+        - name: dataset_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Entry'
+      responses:
+        '201':
+          description: Entry added to dataset successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entry'
+  /v1/datasets/{dataset_id}/entries/{entry_id}:
+    get:
+      summary: Get the label for a specific entry in a dataset
+      parameters:
+        - name: dataset_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: entry_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Entry details retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entry'
+    put:
+      summary: Update the label for a specific entry in a dataset
+      parameters:
+        - name: dataset_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: entry_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Entry'
+      responses:
+        '200':
+          description: Entry label updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entry'
+    delete:
+      summary: Remove an entry from a dataset
+      parameters:
+        - name: dataset_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: entry_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Entry removed from dataset successfully.
+  /v1/datasets/{dataset_id}/entries/{entry_id}/status:
+    put:
+      summary: Flag an entry as "approved" or "for review"
+      parameters:
+        - name: dataset_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: entry_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Status'
+      responses:
+        '200':
+          description: Entry status updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entry'
+components:
+  schemas:
+    Dataset:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The dataset ID.
+        name:
+          type: string
+          description: The dataset name.
+      required:
+        - id
+        - name
+    Entry:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The entry ID.
+        label:
+          type: string
+          description: The label assigned to the entry.
+        status:
+          type: string
+          description: The review status of the entry. Can be 'approved', 'for review', or other statuses as needed.
+      required:
+        - id
+        - label
+        - status
+    Status:
+      type: object
+      properties:
+        status:
+          type: string
+          description: The new review status for an entry. Can be 'approved', 'for review', or other statuses as needed.
+      required:
+        - status
+
