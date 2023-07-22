@@ -1,12 +1,26 @@
+from typing import List
 from fastapi import APIRouter
-from . import store, models
+from .. import store, models, schemas
+from ..database import SessionLocal, engine
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, Session
+from fastapi import Depends, FastAPI
 
 router = APIRouter()
 
 
-@router.get("/datasets/", tags=["datasets"])
-async def read_datasets():
-    return {"message": "This will return a list of datasets"}
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+@router.get("/datasets/", response_model=List[schemas.DatasetInDB])
+async def read_datasets(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    datasets = store.get_datasets(db, skip=skip, limit=limit)
+    return datasets
 
 
 @router.get("/datasets/{dataset_id}", tags=["datasets"])
