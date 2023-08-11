@@ -1,0 +1,15 @@
+/* styles.css */
+.dataset-list {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  
+  .dataset-list li {
+    padding: 10px 15px;
+    border-bottom: 1px solid #e1e1e1;
+  }
+  
+  .dataset-list li:hover {
+    background-color: #f9f9f9;
+  }
+  
